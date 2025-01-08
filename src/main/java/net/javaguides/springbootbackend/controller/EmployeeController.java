@@ -4,6 +4,7 @@ import net.javaguides.springbootbackend.exception.ResourceNotFoundException;
 import net.javaguides.springbootbackend.model.Employee;
 import net.javaguides.springbootbackend.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,7 +39,7 @@ public class EmployeeController {
         Employee employee = employeeRepository.findById(id).
                 orElseThrow(() -> new ResourceNotFoundException("Employee doesn't exist with this id:" + id ));
         return ResponseEntity.ok(employee);
-       //ResponseEntity wrapper class, clients get always clear response.<Type of data>,
+       //ResponseEntity wrapper class, clients get always clear response.
         //holds http responds.
     }
     //update employee rest api, RE is generic class
@@ -55,6 +56,15 @@ public class EmployeeController {
         return ResponseEntity.ok(updateEmployee);//Send a clear response back to the client.
     }
 
+    //build or create employee REST API
+    @DeleteMapping("{id}")
+    public ResponseEntity<HttpStatus> deleteEmployee(@PathVariable long id){
+        Employee employee = employeeRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Employee doesn't exist with this id: + id"));
 
+        employeeRepository.delete(employee);
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 
 }
