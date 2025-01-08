@@ -9,8 +9,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
-
 @CrossOrigin("*")
 @RestController//spring mvc, handle http request
 //api's will define in this class.
@@ -42,6 +40,19 @@ public class EmployeeController {
         return ResponseEntity.ok(employee);
        //ResponseEntity wrapper class, clients get always clear response.<Type of data>,
         //holds http responds.
+    }
+    //update employee rest api, RE is generic class
+    @PutMapping("{id}")//when we have to update the resource
+    public ResponseEntity<Employee> updateEmployee(@PathVariable long id,@RequestBody Employee employeeDetails){
+        Employee updateEmployee = employeeRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Employee doesn't exist with this id:" + id));
+//@RequestBody Converts JSON data sent by client into Java object (Employee employeeDetails).
+        updateEmployee.setFirstName(employeeDetails.getFirstName());
+        updateEmployee.setLastName(employeeDetails.getLastName());
+        updateEmployee.setEmailId(employeeDetails.getEmailId());
+
+        employeeRepository.save(updateEmployee);
+        return ResponseEntity.ok(updateEmployee);//Send a clear response back to the client.
     }
 
 
